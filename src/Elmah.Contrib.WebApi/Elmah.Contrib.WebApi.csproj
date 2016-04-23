@@ -64,4 +64,5 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
