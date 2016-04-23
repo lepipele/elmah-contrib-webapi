@@ -17,11 +17,18 @@ namespace Elmah.Contrib.WebApi
 			if (httpContext == null)
 				return;
 
-			// Wrap the exception in an HttpUnhandledException so that ELMAH can capture the original error page.
-			Exception exceptionToRaise = new HttpUnhandledException(context.Exception.Message, context.Exception);
+            // Wrap the exception in an HttpUnhandledException so that ELMAH can capture the original error page.
+            string errorMessage = context.Exception.Message;
+            try
+            {
+                string data = context.Request.Content.ReadAsStringAsync().Result;
+                errorMessage += " " + data;
+            }
+            catch { }
+            Exception exceptionToRaise = new HttpUnhandledException(errorMessage, context.Exception);
 
-			// Send the exception to ELMAH (for logging, mailing, filtering, etc.).
-			ErrorSignal signal = ErrorSignal.FromContext(httpContext);
+            // Send the exception to ELMAH (for logging, mailing, filtering, etc.).
+            ErrorSignal signal = ErrorSignal.FromContext(httpContext);
 			signal.Raise(exceptionToRaise, httpContext);
 		}
 
